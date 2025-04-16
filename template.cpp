@@ -50,6 +50,20 @@ vector<bool> seive(ll n){vector<bool>primes(n+1,1);primes[0]=primes[1]=0;for(ll 
 vector<vector<ll>>ncr(int n){ vector<vector<ll>>c(n+1,vector<ll>(n+1)); for(int i=0;i<=n;i++){c[i][0]=1;for(int j=1;j<=i;j++){c[i][j]=c[i-1][j-1]+c[i-1][j];}}return c;}
 //1D---------------------------------------------------
 vector<ll> ncr1D(int n){ vector<ll>c(n+1);c[0]=1;for(int i=1;i<=n;i++){for(int j=i;j>0;j--){c[j]=c[j]+c[j-1];}}return c;}
+
+//Include the following header files in your code to use PBDS:
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+//Namespace
+using namespace __gnu_pbds;
+//Templates
+ //defining template when all elements are distinct
+template <class T> using ordered_set = tree<T, null_type,
+less<T>, rb_tree_tag,tree_order_statistics_node_update>;
+ //defining template when duplicate elements are also used
+template <class T> using multi_ordered_set = tree<T, null_type,
+less_equal<T>, rb_tree_tag,tree_order_statistics_node_update>;
+
 void fast_io() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
