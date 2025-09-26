@@ -3,6 +3,9 @@ using namespace std;
 using ll=long long;
 using vi=vector<int>;
 using pii=pair<int,int>;
+using vpii = vector<pii>;
+using vvpii= vector<vpii>;
+using vvi = vector<vi>;
 using piii=pair<int,pair<int,int>>;
 using pll=pair<ll,ll>;
 using vll=vector<ll>;
@@ -11,6 +14,7 @@ using sl=set<ll>;
 using sc=set<char>;
 using PQ=priority_queue<int>;
 using minPQ=priority_queue<int,vector<int>,greater<int>>;
+#define int long long
 #define MOD 1000000007
 #define PI = 3.1415926535897932384626433832795
 #define pb push_back
@@ -64,6 +68,299 @@ less<T>, rb_tree_tag,tree_order_statistics_node_update>;
 template <class T> using multi_ordered_set = tree<T, null_type,
 less_equal<T>, rb_tree_tag,tree_order_statistics_node_update>;
 
+struct segmax {
+    vector<int> arr;     // array
+    vector<int> tree;    // segment tree
+    int n;               // size of array
+
+    void build(int node, int start, int end) {
+        if (start == end) {
+            tree[node] = arr[start];
+            return;
+        }
+        int mid = start + (end - start) / 2;
+        build(2 * node + 1, start, mid);
+        build(2 * node + 2, mid + 1, end);
+        tree[node] = max(tree[2 * node + 1], tree[2 * node + 2]);
+    }
+
+    segmax(vector<int>& input) {
+        n = input.size();
+        arr = input;
+        tree.resize(4 * n);
+        build(0, 0, n - 1); // builds segment tree
+    }
+
+    int queryAns(int node, int start, int end, int left, int right) {
+        if (start > right || end < left) return INT_MIN;
+        if (start >= left && end <= right) return tree[node];
+        int mid = start + (end - start) / 2;
+        return max(queryAns(2 * node + 1, start, mid, left, right),
+                   queryAns(2 * node + 2, mid + 1, end, left, right));
+    }
+
+    int query(int left, int right) {
+        return queryAns(0, 0, n - 1, left, right);
+    }
+
+    void updateVal(int node, int start, int end, int index) {
+        if (start > index || end < index) return;
+        if (start == end && start == index) {
+            tree[node] = arr[start];
+            return;
+        }
+        int mid = start + (end - start) / 2;
+        updateVal(2 * node + 1, start, mid, index);
+        updateVal(2 * node + 2, mid + 1, end, index);
+        tree[node] = max(tree[2 * node + 1], tree[2 * node + 2]);
+    }
+
+    void update(int index, int val) {
+        arr[index] = val;
+        updateVal(0, 0, n - 1, index);
+    }
+};
+struct segsum{
+    vector<int> arr;     // array
+    vector<int> tree;    // segment tree
+    int n;               // size of array
+
+    void build(int node,int start,int end){
+        if(start==end){
+            tree[node]=arr[start];
+            return ;
+        }
+        int mid=start+(end-start)/2;
+        // left child
+        build(2*node+1,start,mid);
+        // right child
+        build(2*node+2,mid+1,end);
+        tree[node]=tree[2*node+1]+tree[2*node+2];
+    }
+
+    segsum(vector<int>& input){
+        n=input.size();
+        arr=input;
+        tree.resize(4*n);
+        build(0,0,n-1); // builds segment tree
+    }
+
+    int queiryAns(int node,int start,int end,int left,int right){
+        if(start>right||end<left)
+            return 0;
+        if(start>=left&&end<=right)
+            return tree[node];
+        int mid=start+(end-start)/2;
+        return queiryAns(2*node+1,start,mid,left,right)+queiryAns(2*node+2,mid+1,end,left,right);
+    }
+
+    int queiry(int left,int right){
+        return queiryAns(0,0,n-1,left,right);
+    }
+
+    void updateVal(int node,int start,int end,int index){
+        if(start>index||end<index)
+            return ;
+        if(start==end&&start==index){
+            tree[node]=arr[start];
+            return;
+        }
+        int mid=start+(end-start)/2;
+        updateVal(2*node+1,start,mid,index);
+        updateVal(2*node+2,mid+1,end,index);
+        tree[node]=tree[2*node+1]+tree[2*node+2];
+    }
+
+    void update(int index,int val){
+        arr[index]=val;
+        updateVal(0,0,n-1,index);
+    }
+};
+struct segmin{
+    vector<int> arr;     // array
+    vector<int> tree;    // segment tree
+    int n;               // size of array
+
+    void build(int node,int start,int end){
+        if(start==end){
+            tree[node]=arr[start];
+            return ;
+        }
+        int mid=start+(end-start)/2;
+        // left child
+        build(2*node+1,start,mid);
+        // right child
+        build(2*node+2,mid+1,end);
+        tree[node]=min(tree[2*node+1],tree[2*node+2]);
+    }
+
+    segmin(vector<int>& input){
+        n=input.size();
+        arr=input;
+        tree.resize(4*n);
+        build(0,0,n-1); // builds segment tree;
+    }
+
+    int queiryAns(int node,int start,int end,int left,int right){
+        if(start>right||end<left)
+            return INT_MIN;
+        if(start>=left&&end<=right)
+            return tree[node];
+        int mid=start+(end-start)/2;
+        return min(queiryAns(2*node+1,start,mid,left,right),queiryAns(2*node+2,mid+1,end,left,right));
+    }
+
+    int query(int left,int right){
+        return queiryAns(0,0,n-1,left,right);
+    }
+
+    void updateVal(int node,int start,int end,int index){
+        if(start>index||end<index)
+            return ;
+        if(start==end&&start==index){
+            tree[node]=arr[start];
+            return;
+        }
+        int mid=start+(end-start)/2;
+        updateVal(2*node+1,start,mid,index);
+        updateVal(2*node+2,mid+1,end,index);
+        tree[node]=min(tree[2*node+1],tree[2*node+2]);
+    }
+
+    void update(int index,int val){
+        arr[index]=val;
+        updateVal(0,0,n-1,index);
+    }
+};
+struct TrieNode {
+    TrieNode* child[26];
+    bool isEndOfWord;
+    TrieNode() {
+        for(int i=0;i<26;i++) child[i]=NULL;
+        isEndOfWord=false;
+    }
+};
+
+struct trie {
+public:
+    TrieNode* root;
+    trie(){
+        root=new TrieNode();
+    }
+    void insert(string word){
+        TrieNode* node = root;
+        for(char c:word){
+            int index=c-'a';
+            if(node->child[index]==NULL){
+                node->child[index]=new TrieNode();
+            }
+            node=node->child[index];
+        }
+        node->isEndOfWord=1;
+    }
+    bool search(string word){
+        TrieNode* node = root;
+        for(char c:word){
+            int index=c-'a';
+            if(node->child[index]==NULL) return 0;
+            node=node->child[index];
+        }
+        return node->isEndOfWord;
+    }
+    bool isEmpty(TrieNode* node){
+        for(int i=0;i<26;i++){
+            if(node->child[i]) return 0;
+        }
+        return 1;
+    }
+    bool Delete(TrieNode* node,string &word,int depth){
+        if(depth==word.size()){
+            if(!node->isEndOfWord) return false;
+            node->isEndOfWord=false;
+            return isEmpty(node);
+        }
+        int index=word[depth]-'a';
+        if(!node->child[index]) return false;
+        bool shouldDeleteChild=Delete(node->child[index],word,depth+1);
+        if(shouldDeleteChild){
+            delete node->child[index];
+            node->child[index]=NULL;
+            return !node->isEndOfWord && isEmpty(node);
+        }
+        return false;
+    }
+    void DeleteWord(string word){
+        Delete(root,word,0);
+    }
+};
+struct BitTrieNode {
+    BitTrieNode* child[2];
+    int count;
+    BitTrieNode() {
+        child[0] = child[1] = NULL;
+        count = 0;
+    }
+    bool containsBit(int bit) { return child[bit] != NULL; }
+    void put(int bit, BitTrieNode* node) { child[bit] = node; }
+    BitTrieNode* get(int bit) { return child[bit]; }
+};
+
+struct bit_trie {
+    BitTrieNode* root;
+    bit_trie() { root = new BitTrieNode(); }
+
+    void insert(int num) {
+        BitTrieNode* node = root;
+        for(int i = 31; i >= 0; i--) {
+            int bit = (num >> i) & 1;
+            if(node->containsBit(bit)) node = node->get(bit);
+            else { node->put(bit, new BitTrieNode()); node = node->get(bit); }
+            node->count++;
+        }
+    }
+
+    void eraseNum(BitTrieNode* node, int num, int i) {
+        if(i < 0) { node->count--; return; }
+        BitTrieNode* child = node->get((num >> i) & 1);
+        eraseNum(child, num, i - 1);
+        if(!child->count) {
+            delete(child);
+            node->child[(num >> i) & 1] = NULL;
+        }
+        node->count--;
+    }
+
+    void erase(int num) { eraseNum(root, num, 31); }
+
+    int getMax(int num) {
+        int maxNum = 0;
+        BitTrieNode* node = root;
+        for(int i = 31; i >= 0; i--) {
+            int bit = (num >> i) & 1;
+            if(node->containsBit(1 - bit)) {
+                maxNum |= (1 << i);
+                node = node->get(1 - bit);
+            } else {
+                node = node->get(bit);
+            }
+        }
+        return maxNum;
+    }
+
+    int getMin(int num) {
+        int minNum = 0;
+        BitTrieNode* node = root;
+        for(int i = 31; i >= 0; i--) {
+            int bit = (num >> i) & 1;
+            if(node->containsBit(bit)) node = node->get(bit);
+            else {
+                minNum |= (1 << i);
+                node = node->get(1 - bit);
+            }
+        }
+        return minNum;
+    }
+};
 void fast_io() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
@@ -77,7 +374,7 @@ void solve(){
     cin>>arr[i];
     
 }
-int main(){
+int32_t main(){
     fast_io();
     int T;
     cin>>T;
